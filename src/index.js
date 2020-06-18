@@ -1,7 +1,8 @@
 import { cube } from './math.js';
+import './styles.css'
 
 function component() {
-  var element = document.createElement('pre');
+  var element = document.createElement('button');
 
   element.innerHTML = [
          'Hello webpack',

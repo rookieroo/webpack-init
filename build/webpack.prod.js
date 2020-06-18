@@ -1,24 +1,37 @@
 const merge = require("webpack-merge");
+const path = require("path");
+const webpack = require("webpack");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const TerserPlugin = require('terser-webpack-plugin');
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const common = require("./webpack.common.js");
+const env = require("./config/prod.env")
 
 module.exports = merge(common, {
-  mode: 'production',
+  mode: "production",
   output: {
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].chunk.js',
   },
   plugins: [
-    new CleanWebpackPlugin(),
-    new UglifyJSPlugin(),
-    new HtmlWebpackPlugin({
-      title: "webpack init",
-      template: './index.html'
+    new webpack.DefinePlugin({
+      "process.env": env,
     }),
+    new MiniCssExtractPlugin({
+      filename: '[name].[hash].css',
+      chunkFilename: '[id].[hash].css',
+    }),
+    new OptimizeCSSAssetsPlugin({
+      assetNameRegExp: /\.css$/g,
+      cssProcessor: require('cssnano'),
+      cssProcessorPluginOptions: {
+        preset: ['default', { discardComments: { removeAll: true } }],
+      },
+      canPrint: true
+    }),
+    new UglifyJSPlugin(),
   ],
   optimization: {
     minimize: true,
