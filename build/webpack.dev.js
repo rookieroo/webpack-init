@@ -13,8 +13,15 @@ module.exports = merge(common, {
     "webpack-hot-middleware/client?reload=true", // hot reload
     path.join(process.cwd(), "src/index.js"), // Start with js/app.js
   ],
+  output: {
+    pathinfo: false,
+  },
+  watchOptions: {
+    aggregateTimeout: 200,
+    poll: 1000
+  },
   mode: "development",
-  devtool: "inline-source-map",
+  devtool: "eval-cheap-module-source-map",
   plugins: [
     new webpack.DefinePlugin({
       "process.env": env,
@@ -30,6 +37,11 @@ module.exports = merge(common, {
       failOnError: false, // show a warning when there is a circular dependency
     }),
   ],
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  },
   // module: {
   //   rules: [
   //     {
